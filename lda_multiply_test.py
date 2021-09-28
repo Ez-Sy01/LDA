@@ -56,6 +56,8 @@ for i in range(np.size(cls2_data, 0)):
     new_y = a * new_x
     plt.plot(new_x,new_y, '*b')
     plt.plot([cls2_data[i,0],new_x], [cls2_data[i,1],new_y], '--k')
+
+# testing
 test_data = np.array([4.81,3.46])
 plt.plot(test_data[0],test_data[1],' *g')
 result = test_data * vector # this vector projection test_data
@@ -64,25 +66,28 @@ projected_test_data_x = (test_data[0] + a * test_data[1]) / (a ** 2 + 1)
 projected_test_data_y = a * projected_test_data_x
 plt.plot(projected_test_data_x, projected_test_data_y,'*g')
 plt.plot([test_data[0], projected_test_data_x],[test_data[1], projected_test_data_y], '--k')
-plt.show()
 
-# classification (가장 가까운 클래스 안에서 가장 가까운 점 찾기)
+# classification -> average in class
 temp1 = new_cls1_data - result
 temp2 = new_cls2_data - result
 
-if np.min(np.abs(temp1)) < np.min(np.abs(temp2)):
-    print('class -> blue')
-else:
+distance_result1 = list()
+for i in range(np.size(temp1,0)):
+    for j in range(i + 1,np.size(temp1,0)):
+        distance_result1.append(np.linalg.norm(temp1[i] - temp1[j]))
+distance_result1 = np.mean(distance_result1)
+print(distance_result1)
+
+distance_result2 = list()
+for i in range(np.size(temp2,0)):
+    for j in range(i + 1,np.size(temp2,0)):
+        distance_result2.append(np.linalg.norm(temp2[i] - temp2[j]))
+distance_result2 = np.mean(distance_result2)
+print(distance_result2)
+
+if distance_result1 < distance_result2:
     print('class -> red')
-
-# classification (클래스의 평균과 비교하기)
-class2_temp1 = new_cls1_data - result
-class2_temp2 = new_cls2_data - result
-
-temp1 = np.mean(class2_temp1, axis = 0)
-temp2 = np.mean(class2_temp2, axis = 0)
-
-if np.min(np.abs(temp1)) < np.min(np.abs(temp2)):
-    print('class -> blue')
 else:
-    print('class -> red')
+    print('class -> blue')
+plt.gca().set_title('experiment -> 2-D LDA Algorithm')
+plt.show()
